@@ -12,44 +12,40 @@ import entities.Reservation;
 public class Program {
 
 	public static void main(String[] args) throws HeadlessException, ParseException {
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		int number = Integer.parseInt(JOptionPane.showInputDialog("Enter room number: "));
 		Date checkIn = sdf.parse(JOptionPane.showInputDialog("Enter date check-In (dd/MM/yyyy)"));
 		Date checkOut = sdf.parse(JOptionPane.showInputDialog("Enter date check-Out (dd/MM/yyyy)"));
-		
+
 		if (!checkOut.after(checkIn)) {
-			//Se check-out não for depois de check-in
+			// Se check-out não for depois de check-in
 			System.out.println("Error in reservation: Check-out date must be after check-in date");
-			//Vai gerar um erro se a data de check-out for antes da data de check-in
-			
-			
-		}else {
+			// Vai gerar um erro se a data de check-out for antes da data de check-in
+
+		} else {
 			Reservation reservation = new Reservation(number, checkIn, checkOut);
 			System.out.println(reservation);
-			
+
 			System.out.println("Update Reservation ");
-			
+
 			checkIn = sdf.parse(JOptionPane.showInputDialog("Enter UpDate check-In (dd/MM/yyyy)"));
 			checkOut = sdf.parse(JOptionPane.showInputDialog("Enter UpDate check-Out (dd/MM/yyyy)"));
 			
-			Date now = new Date();
 			
-			if (checkIn.before(now) || checkOut.before(now)) {
-				//Se a data for antes da da datal de agora ele vai retornar erro
-				System.out.println("Error in reservation: Reservation dates for updates must be future ");
-			}else if (!checkOut.after(checkIn)) {
-				//Se check-out não for depois de check-in
-				System.out.println("Error in reservation: Check-out date must be after check-in date");
-				//Vai gerar um erro se a data de check-out for antes da data de check-in
-				
-				
-			} else {
+
+			String error = reservation.UpdateDates(checkIn, checkOut);
+			//Vai retornar a string
 			
-			reservation.UpdateDates(checkIn, checkOut);
-			//Atualização das datas
-			
+			if (error!= null) {
+				System.out.println("Error in reservation: "+error);
+				//Se der erro vai ser quem vai retornar o erro
+			}else {
+				System.out.println("Update");
+				System.out.println(reservation);
 			}
+			
+
 		}
 	}
 
