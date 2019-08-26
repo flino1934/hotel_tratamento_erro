@@ -4,11 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import entities.exceptions.DomainException;
+
 public class Reservation {
-	
+
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	//Static para não instanciar um SimpleDateFormat para cada obj Reservation
-	
+	// Static para não instanciar um SimpleDateFormat para cada obj Reservation
+
 	private Integer number;
 	private Date checkIn;
 	private Date checkOut;
@@ -17,7 +19,14 @@ public class Reservation {
 
 	}
 
-	public Reservation(Integer number, Date checkIn, Date checkOut) {
+	public Reservation(Integer number, Date checkIn, Date checkOut) throws DomainException{
+
+		if (!checkOut.after(checkIn)) {
+			// Se check-out não for depois de check-in
+			throw new DomainException(" Check-out date must be after check-in date");
+			// Vai gerar um erro se a data de check-out for antes da data de check-in
+
+		}
 
 		this.number = number;
 		this.checkIn = checkIn;
@@ -39,42 +48,41 @@ public class Reservation {
 	public Date getCheckOut() {
 		return checkOut;
 	}
-	
+
 	public long duration() {
-		
+
 		long dif = checkOut.getTime() - checkIn.getTime();
 		return TimeUnit.DAYS.convert(dif, TimeUnit.MILLISECONDS);
-		
+
 	}
-	
-	public String UpdateDates(Date checkIn, Date checkOut) {
-		
+
+	public void UpdateDates(Date checkIn, Date checkOut) throws DomainException {
+
 		Date now = new Date();
-		
+
 		if (checkIn.before(now) || checkOut.before(now)) {
-			//Se a data for antes da da datal de agora ele vai retornar erro
-			return"Reservation dates for updates must be future ";
-		}if (!checkOut.after(checkIn)) {
-			//Se check-out não for depois de check-in
-			return " Check-out date must be after check-in date";
-			//Vai gerar um erro se a data de check-out for antes da data de check-in
-						
+			// Se a data for antes da da datal de agora ele vai retornar erro
+			throw new DomainException("Reservation dates for updates must be future dates ");
+
 		}
-		
+		if (!checkOut.after(checkIn)) {
+			// Se check-out não for depois de check-in
+			throw new DomainException(" Check-out date must be after check-in date");
+			// Vai gerar um erro se a data de check-out for antes da data de check-in
+
+		}
+
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
-		
-		return null;
-		
+
 	}
 
 	@Override
 	public String toString() {
-		
-		return "Room: "+number
-				+"\nCheck-In: "+sdf.format(checkIn)+" Check-Out: "+sdf.format(checkOut)
-				+"\nDuration: "+duration();
-		
+
+		return "Room: " + number + "\nCheck-In: " + sdf.format(checkIn) + " Check-Out: " + sdf.format(checkOut)
+				+ "\nDuration: " + duration();
+
 	}
-	
+
 }
